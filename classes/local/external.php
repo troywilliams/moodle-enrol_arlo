@@ -50,6 +50,21 @@ defined('MOODLE_INTERNAL') || die();
  */
 class external {
 
+    public static function get_contact_resource(int $id) {
+        if ($id <= 0) {
+            throw new coding_exception('UnexpectedValueException');
+        }
+        $pluginconfig = new arlo_plugin_config();
+        $client = client::get_instance();
+        $requesturi = new RequestUri();
+        $requesturi->setHost($pluginconfig->get('platform'));
+        $requesturi->setResourcePath("contacts/{$id}/");
+        $request = new Request('GET', $requesturi->output(true));
+        $response = $client->send_request($request);
+        $resource = response_processor::process($response);
+        return $resource;
+    }
+
     /**
      * Get a single registration from Arlo and deserialize to resource object.
      *
